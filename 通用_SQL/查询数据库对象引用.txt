@@ -1,0 +1,9 @@
+SELECT  *
+FROM    sys.sql_modules
+WHERE   definition LIKE '%TestTable%'; 
+
+SELECT  *
+FROM    sys.objects
+WHERE   object_id IN ( SELECT   object_id
+                       FROM     sys.sql_modules
+                       WHERE    definition LIKE '%TestTable%');

@@ -1,0 +1,40 @@
+--（1）设置整个会话的隔离级别 
+--SET TRANSACTION ISOLATION LEVEL <isolation name>;
+ 
+SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;--WITH(NOLOCK)其实是表提示（table_hint）中的一种。它等同于 READUNCOMMITTED
+
+SET TRAN ISOLATION LEVEL READ COMMITTED;
+
+--（2）用表提示设置查询的隔离级别 
+--SELECT ... FROM <table> WITH (<isolation name>);<br>
+SELECT * FROM dbo.myProduct WITH (READCOMMITTED);
+
+
+WITH (<table_hint> )
+指定查询优化器对此表和此语句使用优化或锁定策略。有关详细信息，请参阅表提示 (Transact-SQL)。
+
+在 SQL Server 2005 中，除一些例外情况之外，仅当使用了 WITH 关键字指定表提示时，FROM 子句中才支持这些提示。指定表提示时还必须使用圆括号。 
+
+使用或不使用 WITH 关键字均可使用的表提示如下：NOLOCK、READUNCOMMITTED、UPDLOCK、REPEATABLEREAD、SERIALIZABLE、READCOMMITTED、FASTFIRSTROW、TABLOCK、TABLOCKX、PAGLOCK、ROWLOCK、NOWAIT、READPAST、XLOCK 和 NOEXPAND。不使用 WITH 关键字指定这些表提示时，必须单独指定提示。例如：FROM t (fastfirstrow)。
+
+使用另一个选项指定提示时（如 (fastfirstrow, index(myindex) 所示），必须使用 WITH 关键字指定提示，例如： 
+
+FROM t WITH (fastfirstrow, index(myindex)).
+
+当数据库的兼容级别为 80 或更低时，可以不使用 WITH 关键字来指定提示。
+
+
+从这句话来讲,with(nolock)和nolock不加with在2005里是相同的.
+
+
+
+SET   TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;--等于使用了  with(noclock))
+SELECT * FROM TABLE_NAME ;
+SET   TRANSACTION ISOLATION LEVEL REPEATABLE READ ;
+
+The official SQL standard defines four isolation levels:
+
+READ COMMITTED
+READ UNCOMMITTED
+REPEATABLE READ
+SERIALIZABLE

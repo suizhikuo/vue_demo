@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title></title>
+    <meta charset="utf-8" />
+</head>
+
+<body>
+    <input type="button" value="修改父页面的文本域的值" onclick="EditParentTextVale();" />
+
+
+    <script type="text/javascript">
+        var EditParentTextVale = function () {
+            window.opener.document.getElementById("txtParentText").value = "子页面修改了父页面的文本域的值!";
+        };
+    </script>
+</body>
+
+</html>

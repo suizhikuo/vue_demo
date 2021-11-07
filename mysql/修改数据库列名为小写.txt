@@ -1,0 +1,18 @@
+--  mysql  列名转小写
+SELECT
+	concat( 'alter table ', TABLE_NAME, ' change column ', COLUMN_NAME, ' ', LOWER( COLUMN_NAME ), ' ', COLUMN_TYPE, ' comment \'', COLUMN_COMMENT, '\';' ) AS '修改脚本' 
+FROM
+	information_schema.COLUMNS 
+WHERE
+	TABLE_SCHEMA = '对应的库' 
+	AND TABLE_NAME = '对应的表';
+	
+-- 大写列名转小写列名
+SELECT 
+concat( 'alter table ', TABLE_NAME, ' change column ', COLUMN_NAME, ' ', REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(COLUMN_NAME, 'Z', '_z'), 'Y', '_y'),'X','_x'),'W','_w'),'V','_v'),'U','_u'),'T','_t'),'S','_s'),'R','_r'),'Q','_q'),'P','_p'),'O','_o'),'N','_n'),'M','_m'),'L', '_l'), 'K','_k'), 'J', '_j'), 'I','_i'), 'H', '_h'), 'G', '_g'), 'F','_f'), 'E', '_e'), 'D', '_d'), 'C', '_c'), 'B', '_b'), 'A', '_a') , ' ', COLUMN_TYPE, ' comment \'', COLUMN_COMMENT, '\';' ) AS '修改脚本' 
+FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'cfdb' AND TABLE_NAME = 'bo_project_info';
+
+-- 添加一起
+SELECT 
+concat( 'alter table ', TABLE_NAME, ' change column ', COLUMN_NAME, ' ', REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(COLUMN_NAME, 'Z', '_z'), 'Y', '_y'),'X','_x'),'W','_w'),'V','_v'),'U','_u'),'T','_t'),'S','_s'),'R','_r'),'Q','_q'),'P','_p'),'O','_o'),'N','_n'),'M','_m'),'L', '_l'), 'K','_k'), 'J', '_j'), 'I','_i'), 'H', '_h'), 'G', '_g'), 'F','_f'), 'E', '_e'), 'D', '_d'), 'C', '_c'), 'B', '_b'), 'A', '_a') , ' ', COLUMN_TYPE, ' comment \'', COLUMN_COMMENT, '\';' ) AS '修改脚本' 
+FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'cfdb' AND TABLE_NAME = 'bo_project_info';

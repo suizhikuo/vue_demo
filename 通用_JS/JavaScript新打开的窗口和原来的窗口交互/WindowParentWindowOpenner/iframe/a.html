@@ -1,0 +1,36 @@
+﻿<html>
+<head>
+    <title>父页面</title>
+</head>
+<body>
+    <form id="form1" action="">
+        <div>
+            输入值：
+            <input type="text" name="username" id="username" /><br />
+            <iframe src="b.html" width="400px" height="300px"id="iframe"></iframe>
+            <input type="button" name="name" value="获取iframe的内容" onclick="changeValue();" />
+        </div>
+    </form>
+
+    <script>
+        function getDocument(iframe) {
+            var Doc;
+            try {
+                Doc = document.getElementById("iframe").contentWindow.document;// For IE5.5 and IE6
+            }
+            catch (ex) { }
+
+            if (!Doc) {
+                Doc = document.getElementById("iframe").contentDocument;// For NS6
+            }
+
+            return Doc;
+
+        }
+
+        var changeValue = function () {
+            getDocument().getElementById("btnButton").value = "被修改了!";
+        }
+    </script>
+</body>
+</html>

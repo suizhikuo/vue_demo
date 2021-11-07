@@ -1,0 +1,14 @@
+﻿<html>
+<head>
+    <script type="text/javascript">
+
+        function getpValue() {
+            document.getElementById("span1").innerText = window.parent.document.getElementById("username").value;
+        }
+    </script>
+</head>
+<body>
+    <span>文本框值为：</span><span id="span1"></span><br />
+    <input type="button" value="获取父窗口内的文本框值" onclick="getpValue();" id="btnButton">
+</body>
+</html>

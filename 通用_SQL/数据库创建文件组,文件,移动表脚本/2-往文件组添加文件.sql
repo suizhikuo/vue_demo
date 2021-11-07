@@ -1,0 +1,77 @@
+USE [TestHekaton];
+--添加文件
+ALTER DATABASE [TestHekaton]
+ADD FILE
+(
+NAME = Report,
+FILENAME = 'D:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\Report.ndf',
+SIZE = 5MB,
+
+FILEGROWTH = 5MB
+) 
+TO FILEGROUP Report;
+
+ALTER DATABASE [TestHekaton]
+ADD FILE
+(
+NAME = ASN,
+FILENAME = 'D:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\ASN.ndf',
+SIZE = 5MB,
+
+FILEGROWTH = 5MB
+) 
+TO FILEGROUP ASN;
+
+ALTER DATABASE [TestHekaton]
+ADD FILE
+(
+NAME = Schedule,
+FILENAME = 'D:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\Schedule.ndf',
+SIZE = 5MB,
+
+FILEGROWTH = 5MB
+) 
+TO FILEGROUP Schedule;
+
+ALTER DATABASE [TestHekaton]
+ADD FILE
+(
+NAME = PO,
+FILENAME = 'D:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\PO.ndf',
+SIZE = 5MB,
+
+FILEGROWTH = 5MB
+) 
+TO FILEGROUP PO;
+
+ALTER DATABASE [TestHekaton]
+ADD FILE
+(
+NAME = [Int],
+FILENAME = 'D:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\Int.ndf',
+SIZE = 5MB,
+
+FILEGROWTH = 5MB
+) 
+TO FILEGROUP [Int];
+
+ALTER DATABASE [TestHekaton]
+ADD FILE
+(
+NAME = His,
+FILENAME = 'D:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\His.ndf',
+SIZE = 5MB,
+
+FILEGROWTH = 5MB
+) 
+TO FILEGROUP His;
+
+--内存表数据文件
+ALTER DATABASE [TestHekaton]
+ADD FILE
+(
+NAME = MemoryFG,
+FILENAME ='D:\Program Files\Microsoft SQL Server\MSSQL12.MSSQLSERVER\MSSQL\DATA\MemoryFG.ndf'
+)
+TO FILEGROUP MemoryFG;
+GO

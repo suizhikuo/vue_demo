@@ -1,0 +1,36 @@
+/*
+ Navicat Premium Data Transfer
+
+ Source Server         : 10.122.30.163_订单中心,E采测试
+ Source Server Type    : MySQL
+ Source Server Version : 50725
+ Source Host           : 10.122.30.163:3306
+ Source Schema         : relb2b
+
+ Target Server Type    : MySQL
+ Target Server Version : 50725
+ File Encoding         : 65001
+
+ Date: 01/07/2021 14:43:17
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for test_tablename
+-- ----------------------------
+DROP TABLE IF EXISTS `test_tablename`;
+CREATE TABLE `test_tablename`  (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `is_delete` bit(1) NULL DEFAULT b'0' COMMENT '是否删除(0:未删除,1已删除)',
+  `create_by` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建人	',
+  `create_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建日期',
+  `update_by` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新人',
+  `update_time` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新日期',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '备注',
+  `record_status` int(11) NULL DEFAULT NULL COMMENT '记录状态(0:新建1:保存2:提交)',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '业务表_测试表' ROW_FORMAT = Compact;
+
+SET FOREIGN_KEY_CHECKS = 1;

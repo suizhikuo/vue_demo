@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
+    <title>站点更新中-应用程序脱机</title>
+    <style type="text/css">
+        div {
+            background-color: #ffffcc;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            padding-left: 10px;
+            padding-right: 10px;
+            border-style: solid;
+            border-color: Black;
+            border-width: 1px;
+        }
+    </style>
+</head>
+<body>
+    <!--在ASP.NET 2.0 站点根目录下，只要存在 App_Offline.htm 文件，那么所有对.aspx的请求都将转向App_Offline.htm 。而且浏览器的地址栏显示的是所请求的.aspx的URL。
+    这样当我们的站点需要维护时，只要把App_Offline.htm 拷贝到站点根目录下即可。-->
+    <!--注意事项：
+    （1）App_Offline.htm 不能小于 512 字节。
+    （2）IIS 不能 Stop。
+    （3）只有对.aspx文件的请求才自动转到App_Offline.htm文件；如果请求的是.htm文件，则不会转到App_Offline.htm-->
+    <!--此应用程序当前处于脱机状态。要启用该应用程序，请从应用程序根目录
+    删除 app_offline.htm 文件。-->
+    <div id=Application_Offline>
+        <h1>站点更新中</h1>
+        <p>站点更新中，请稍后访问。</p>
+    </div>
+</body>
+</html>

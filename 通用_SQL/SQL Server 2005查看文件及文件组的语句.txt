@@ -1,0 +1,29 @@
+--文件组
+SELECT  *
+FROM    sys.filegroups
+
+--文件
+SELECT  *
+FROM    sys.database_files
+
+--文件组和文件组内的文件
+SELECT df.[name], df.physical_name, df.[size], df.growth, f.[name]
+　　[filegroup], f.is_default
+　　FROM sys.database_files df
+　　JOIN sys.filegroups f
+　　ON df.data_space_id = f.data_space_id
+
+
+--查看表所在的文件组
+SELECT  o.[name] ,
+        f.[name]
+FROM    sys.indexes i
+        INNER JOIN sys.filegroups f ON i.data_space_id = f.data_space_id
+        INNER JOIN sys.all_objects o ON i.[object_id] = o.[object_id]
+WHERE   o.type = 'U'
+GO 
+
+
+
+
+

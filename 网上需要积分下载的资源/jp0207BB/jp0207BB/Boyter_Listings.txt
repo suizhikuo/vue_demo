@@ -1,0 +1,291 @@
+Brian Boyter	July 2002	Java Pro magazine	©2002 Fawcette Technical Publications
+
+
+Listing 1
+RSA Digital Certificate
+Public key cryptography uses a private key and a public key. A digital certificate (shown here) includes the 
+public key, start and end dates, a serial number, an identity, and the signature of a Certificate Authority. 
+
+Serial number:
+	6822 3C33 7945 3AC8 F8C5 398B 7469 94E1
+Signature algorithm: md5RSA
+Issuer: CN = VeriSign Class 1 CA Individual
+	Subscriber-Persona Not Validated,
+	OU = www.verisign.com/repository/RPA Incorp. 
+	By Ref.,LIAB.LTD(c)98,
+	OU = VeriSign Trust Network, O = VeriSign, Inc.
+Valid from: Wednesday, May 30, 2001 7:00:00 PM
+Valid to: Monday, July 30, 2001 6:59:59 PM
+Subject: E = boyter@txdirect.net,
+	CN = Brian Boyter,
+	OU = Digital ID Class 1 – Microsoft,
+	OU = Persona Not Validated,
+	OU = www.verisign.com/repository/RPA Incorp. 
+	by ref.,LIAB.LTD(c)98,
+	OU = VeriSign Trust Network, O = VeriSign, Inc.
+Public key: 3081 8902 8181 00BA B459 0F39 156E 
+	C69E C238 BFD0 401D DBB9 D207 DFA4 5DBD 09F3 
+	5CE6 B5E6 C357 88DD 808B 0699 5F68 A2A4 6A8A 
+	3B21 6D3D D0A1 1E5F DAB1 FB8E F835 F84F 849B 
+	29A4 6943 8D59 0669 7C81 1D00 03B7 1A02 4E7A 
+	8596 11BD 7CC4 07A3 D7E5 9FF6 5684 B853 04F0 
+	0938 A11E 5218 F9AB F034 070D C8C4 6652 C19B 
+	4C57 E435 EFDC 85D4 B269 07B7 0102 0301 0001
+Basic constraints: Subject Type=End Entity,
+	Path Length Constraint=None
+Certificate policy:
+	Policy Qualifier Id=CPS Qualifier:
+	https://www.verisign.com/CPS
+	Policy Qualifier Info:
+		Organization=VeriSign, Inc., 
+	Notice Number=1
+CRL Distribution Point Distribution Point Name:
+	Full Name:
+		URL=http://crl.verisign.com/class1.crl
+Thumbprint algorithm: sha1
+Thumbprint: 74A8 9F07 43AA 8FFC C4D5 AB09 3773 
+3AFF F7E7 DFFC
+
+
+Listing 2
+Custom Security
+Method checkClientTrusted() checks the signatures, the validity dates of the certificates in the chain of 
+trust, and the CRLs. However, this security function is usually not adequate for the server. You can increase 
+security by customizing checkClientTrusted().
+
+public void checkClientTrusted(
+	X509Certificate chain[]) {
+	// DontKnowFlag indicates what to do if we're
+	// not sure if the certificate is revoked
+	// int DontKnowFlag=0;  // reject the cert
+	// int DontKnowFlag=1;  // accept the cert
+	int DontKnowFlag=2;	// ask the user
+
+	// check for revoked certs in the cert chain
+	if (com.boyter.mscrypto.MSValidCertificate.
+		isCertChainValid(chain, DontKnowFlag))
+		return;
+
+	// client cert is not trusted
+	System.out.println("Client Certificate is 
+		not Trusted - aborting");
+	System.exit(2);
+}
+
+
+Listing 3
+Check for Certification Revocation
+Method isCertRevoked() in our verification program calls two native functions: MSgetCRL() and 
+MSVerifyCertRevocation() (shown in Listing 4). 
+
+boolean isCertRevoked(X509Certificate cert, 
+	int DontKnowFlag) {
+	byte[] certblob = cert.getEncoded();
+
+	// Does the cert have a CDP (
+	// CRL distribution point)???
+	byte[] CDPblob = cert.getExtensionValue(
+		"2.5.29.31");
+
+	// yes there is a CDP - ASN parse the CDP
+	String[] URLarray = MSF.MSparseCDP(CDPblob);
+	for (int i=0; i<URLarray.length; i++) {
+		String URL = URLarray[i];
+		// go fetch that CRL
+		if (MSF.MSgetCRL(URL)) {
+			// url was fetched correctly
+			break;
+	}
+
+	// is the cert revoked???
+	int revocationStatus = 
+		MSF.MSVerifyCertRevocation(certblob);
+	switch (revocationStatus) {
+		case 0:    // cert is revoked
+			return AskUserWhatHeWantsToDo(DontKnowFlag);
+		case 1:    // cert is not revoked
+			return false;
+		default:
+	}
+
+	// processing error - cannot determine 
+	// if cert is revoked
+	return AskUserWhatHeWantsToDo(DontKnowFlag);
+}
+
+
+Listing 4
+Download the Certificate Revocation List (CRL)
+Functions MSgetCRL() and MSVerifyCertRevocation() are called by method isCertRevoked() (shown in Listing 3). 
+MSgetCRL(), in turn, calls Microsoft function CryptRetrieveObjectByURL(), which causes the CRL to be downloaded 
+if it's not already in cache. Function MSVerifyCertRevocation() calls Microsoft function CertVerifyRevocation() to see 
+if a certificate has been revoked.
+
+MSgetCRL(jstring jurl)
+{
+	if (!CryptRetrieveObjectByUrl(
+		url, CONTEXT_OID_CRL, 0, timeout*1000, 
+		(LPVOID)&crl, NULL, NULL, NULL, NULL)) {
+		printf("CryptRetrieveObjectByUrl failed\n");
+		// cached url is corrupted
+		DeleteUrlCacheEntry(url);
+		return JNI_FALSE;
+	}
+	return JNI_TRUE;
+}
+
+
+MSVerifyCertRevocation (jbyteArray jCert)
+{
+	rgpvContext[0] = (PVOID)pCertContext;
+	if (CertVerifyRevocation(X509_ASN_ENCODING,
+		CERT_CONTEXT_REVOCATION_TYPE, 1, rgpvContext, 
+		0, NULL, &status)) {
+		return 1;    // cert is not revoked
+	}
+
+	if (status.dwError == CRYPT_E_REVOKED)
+		return 0;    // cert is revoked
+
+	return -2;    // processing error
+}
+
+
+Listing 5
+Find the Private Keys in the Windows Keystore
+The CertEnumCertificatesInStore() method looks at all the certificates in the Microsoft "My" certificate store; each 
+certificate should have a private key associated with it. Each certificate/private key combination has a unique identifier 
+called the CONTAINER name, which Java uses as the alias. 
+
+JobjectArray MSgetAliases (jstring jcertStore) {
+
+	// open Microsoft certificate store
+	hSystemStore = CertOpenStore(
+		CERT_STORE_PROV_SYSTEM,
+		0, 0, CERT_SYSTEM_STORE_CURRENT_USER, 
+		certStore);
+
+	// read all the certificates
+	while(pCertContext=
+		CertEnumCertificatesInStore(
+		hSystemStore, pCertContext)) {
+
+		// get the cert key container name
+		CertGetCertificateContextProperty(
+			pCertContext, CERT_KEY_PROV_INFO_PROP_ID, 
+			alias, &propLen);
+
+		// add to list of aliases
+		AddDataToList(&list, alias, strlen(alias)+1);
+	}
+	return jaliases;
+}
+
+
+Listing 6
+Certificate Chain
+Method getCertChain() returns the ordered certificate chain for a certificate.
+
+MSCryptoFunctions MSF = new MSCryptoFunctions();
+X509Certificate[] getCertChain(
+	X509Certificate cert) {
+
+	try {
+		getCACerts();
+
+		Principal subject = cert.getSubjectDN();
+		Principal issuer  = cert.getIssuerDN();
+		CertChainList.add(cert);
+
+		// stop if issuer==subject (root CA)
+		while (!(issuer.equals(subject))) {
+
+			match = false;
+			X509CertSelector xcs = 
+				new X509CertSelector();
+			xcs.setCertificateValid(new Date());
+
+			Collection certcollection =
+				CACerts.getCertificates(xcs);
+
+			//
+			// the next 7 lines are inserted to work
+			// around a problem with X509CertSelector.
+			// we should be able to do this with
+			// xcs.setSubject(issuer.toString());
+			//
+			Iterator iter = certcollection.iterator();
+			while ( iter.hasNext() ) {
+				X509Certificate cacert =
+					(X509Certificate) (iter.next());
+				if (!cacert.getSubjectDN().equals(issuer))
+					iter.remove();
+			}
+
+			issuerArray =
+				new X509Certificate[
+				certcollection.size()];
+			issuerArray = (X509Certificate[])
+			certcollection.toArray(issuerArray);
+
+			for (int i=0; i<issuerArray.length; i++)
+				if (verifySignature(issuerArray[i], cert)) {
+					match = true;
+					cert = issuerArray[i];
+					subject = cert.getSubjectDN();
+					issuer  = cert.getIssuerDN();
+					CertChainList.add(cert);
+					break;
+				}
+			if (!match) {
+				return null;    // cert chain broken
+			}
+		}
+	} catch (Exception e) {
+		e.printStackTrace(); 
+	}
+
+	X509Certificate[] CertChain =
+		new X509Certificate[CertChainList.size()];
+	CertChainList.toArray(CertChain);
+
+	return CertChain; 
+}
+
+
+Listing 7
+Your Own Private Key
+Method getPrivateKey() returns the private key for an alias, provided the private key can be exported from 
+the Windows key store. 
+
+MSCryptoFunctions MSF = new MSCryptoFunctions();
+public PrivateKey getPrivateKey(String alias) {
+
+// get the private key from MS Windows for 
+// this alias
+	byte[] keyblob = MSF.MSgetPrivateKey(alias);
+
+	if (keyblob == null) {  // generate a dummy key
+		byte[] modblob = new byte[128];
+		for(i=0; i<128; i++) 
+			modblob[i] = 127;
+		mod = new BigInteger(modblob);
+		exp = mod;
+
+	} else {    // use the key that got exported
+		for(i=0; i<keysize/8; i++) {
+			modblob[i] = keyblob[19-i+(keysize/16)*2];
+			expblob[i] = keyblob[19-i+(keysize/16)*9];
+		}
+		mod = new BigInteger(1, modblob);
+		exp = new BigInteger(1, expblob);
+	}
+	RSAPrivateKeySpec privKeySpec = 
+		new RSAPrivateKeySpec(mod, exp);
+	KeyFactory kf = KeyFactory.getInstance("RSA");
+	privkey = kf.generatePrivate(privKeySpec);
+	return privkey;
+}
+
+
+

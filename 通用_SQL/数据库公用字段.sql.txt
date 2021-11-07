@@ -1,0 +1,9 @@
+alter TABLE [dbo].[TableTest] 
+add 
+[SortNum] int NULL DEFAULT ((0)) ,
+[IsDelete] bit NULL DEFAULT ((0)) ,
+[RecordStatus] int NULL DEFAULT ((0)) ,
+[CreateUser] nvarchar(50) NULL DEFAULT (N'创建人') ,
+[CreateDatetime] datetime NULL DEFAULT (getdate()) ,
+[LastUpdateUser] nvarchar(50) NULL DEFAULT (N'最后修改人') ,
+[LastUpdateDatetime] datetime NULL DEFAULT (getdate()) ;

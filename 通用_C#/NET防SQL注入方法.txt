@@ -1,0 +1,47 @@
+﻿//http://www.cnblogs.com/xiepeixing/archive/2012/11/13/2767733.html
+
+1，利用SqlCommand传参数的方法：
+
+string strSQL="SELECT * FROM [user] WHERE user_id=@id";
+SqlCommand cmd = new SqlCommand();
+cmd.CommandText = strSQL;
+cmd.Parameters.Add("@id",SqlDbType.VarChar,20).Value=Request["id"].ToString();
+　　
+
+2，过滤禁止运行法：
+
+/// <summary>
+/// 过滤SQL语句,防止注入
+/// </summary>
+/// <param name="strSql"></param>
+/// <returns>0 - 没有注入, 1 - 有注入 </returns>
+public int filterSql(string sSql)
+{ 
+    int srcLen, decLen = 0;
+    sSql = sSql.ToLower().Trim();
+    srcLen = sSql.Length;
+    sSql = sSql.Replace("exec", "");
+    sSql = sSql.Replace("delete", "");
+    sSql = sSql.Replace("master", "");
+    sSql = sSql.Replace("truncate", "");
+    sSql = sSql.Replace("declare", "");
+    sSql = sSql.Replace("create", "");
+    sSql = sSql.Replace("xp_", "no");
+    decLen = sSql.Length;
+    if (srcLen == decLen) return 0; else return 1;         
+}
+
+
+//http://www.cnblogs.com/fumj/p/3223320.html
+
+//sql过滤关键字   
+public static bool CheckKeyWord(string sWord)
+    {
+       //过滤关键字
+        string StrKeyWord = @"select|insert|delete|from|count\(|drop table|update|truncate|asc\(|mid\(|char\(|xp_cmdshell|exec master|netlocalgroup administrators|:|net user|""|or|and";
+     //过滤关键字符
+     string StrRegex = @"[-|;|,|/|\(|\)|\[|\]|}|{|%|\@|*|!|']";
+        if (Regex.IsMatch(sWord, StrKeyWord, RegexOptions.IgnoreCase) || Regex.IsMatch(sWord, StrRegex))
+            return true;
+        return false;
+    }

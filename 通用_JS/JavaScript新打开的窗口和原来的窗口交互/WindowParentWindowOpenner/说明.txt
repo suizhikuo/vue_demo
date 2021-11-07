@@ -1,0 +1,11 @@
+//isJavaScript新打开的窗口和原来的窗口交互
+//iframe之间的相互交互
+
+// http://www.cnblogs.com/suizhikuo/p/3866728.html
+// http://www.cnblogs.com/suizhikuo/p/3228938.html
+//http://www.mamicode.com/info-detail-121730.html
+
+
+
+最好用jquery进行操作.这样应该就不会有浏览器的安全提示.
+如果用原生的JavaScript.最新的浏览器对这个功能有限制,所以要在兼容模式下,弹出提示框后要允许阻止内容.才能看到效果.

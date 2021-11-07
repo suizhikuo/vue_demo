@@ -1,0 +1,15 @@
+对于哈希索引来说，使用方式几乎不用考虑，因为只有一种，只有=和in时才会用到。最需要注意的是存储桶数的设定，一个适合的哈希索引的标准基本就是超过30%的剩余空间、没有大量单一重复值。因此，在创建时最好声明预期表行数2到3倍的存储桶数，如果你估不出来行数，就声明大概数量的5倍。随时注意存储桶使用情况，这个情况可以通过MS提供的DMV查看：
+SELECT 
+   -- object_name(hs.object_id) AS 'object name', 
+   i.name as 'index name', 
+   hs.total_bucket_count,
+   hs.empty_bucket_count,
+   floor((cast(empty_bucket_count as float)/total_bucket_count) * 100) AS 'empty_bucket_percent',
+   hs.avg_chain_length, 
+   hs.max_chain_length
+FROM sys.dm_db_xtp_hash_index_stats AS hs 
+   JOIN sys.indexes AS i 
+   ON hs.object_id=i.object_id AND hs.index_id=i.index_id
+只要empty_bucket_percent列较高，就说明有空余桶，官方建议30%以上，如果低于这个数，建议调高存储桶数；而avg_chain_length则可以看到平均的重复值数量，官方建议不超过8，如果超过了建议增加索引键列来降低重复，或改成非聚集索引。
+http://bbs.csdn.net/topics/390755924
+

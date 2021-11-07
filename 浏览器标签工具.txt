@@ -1,0 +1,7 @@
+可以放到浏览器标签的工具:
+
+VisualEvent:
+javascript:(function() {var protocol = window.location.protocol === 'file:' ?'http:' : '';var url = protocol+'//www.sprymedia.co.uk/VisualEvent/VisualEvent_Loader.js';if( typeof VisualEvent!='undefined' ) {if ( VisualEvent.instance !== null ) {VisualEvent.close();}else {new VisualEvent();}}else {var n=document.createElement('script');n.setAttribute('language','JavaScript');n.setAttribute('src',url+'?rand='+new Date().getTime());document.body.appendChild(n);}})();
+
+动态加载jQuery:
+javascript:(function () {if (typeof jQuery == 'undefined') {var protocol = window.location.protocol === 'file:' ?'http:' : window.location.protocol;var url = protocol+'//libs.baidu.com/jquery/2.1.1/jquery.min.js'; window.console.log('不存在Query类库,\r\n开始添加,\r\n地址:' + url);var n = document.createElement('script');n.setAttribute('language', 'JavaScript');n.setAttribute('src', url + '?rand=' + new Date().getTime());document.body.appendChild(n);} else {window.console.log('已经存在jQuery类库,\r\n无需再添加!\r\n');}})();

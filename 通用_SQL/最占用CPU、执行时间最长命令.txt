@@ -1,0 +1,49 @@
+最占用CPU、执行时间最长命令
+这个和索引无关，但是还是在这里提出来，因为他也属于DMV带给我们的功能吗，他可以让你轻松查询出，那些sql语句占用你的cpu最高
+ 
+SELECT TOP 100 execution_count,
+           total_logical_reads /execution_count AS [Avg Logical Reads],
+           total_elapsed_time /execution_count AS [Avg Elapsed Time],
+                db_name(st.dbid) as [database name],
+           object_name(st.dbid) as [object name],
+           object_name(st.objectid) as [object name 1],
+           SUBSTRING(st.text, (qs.statement_start_offset / 2) + 1, 
+           ((CASE statement_end_offset WHEN - 1 THEN DATALENGTH(st.text) ELSE qs.statement_end_offset END - qs.statement_start_offset) 
+             / 2) + 1) AS statement_text
+  FROM sys.dm_exec_query_stats AS qs CROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) AS st
+ WHERE execution_count > 100
+ ORDER BY 1 DESC;
+ 
+返回结果：
+ 
+ 
+执行时间最长的命令
+SELECT TOP 10 COALESCE(DB_NAME(st.dbid),
+DB_NAME(CAST(pa.value as int))+'*',
+'Resource') AS DBNAME,
+SUBSTRING(text,
+-- starting value for substring
+        CASE WHEN statement_start_offset = 0
+OR statement_start_offset IS NULL
+THEN 1
+ELSE statement_start_offset/2 + 1 END,
+-- ending value for substring
+        CASE WHEN statement_end_offset = 0
+OR statement_end_offset = -1
+OR statement_end_offset IS NULL
+THEN LEN(text)
+ELSE statement_end_offset/2 END -
+CASE WHEN statement_start_offset = 0
+OR statement_start_offset IS NULL
+THEN 1
+ELSE statement_start_offset/2  END + 1
+)  AS TSQL,
+total_logical_reads/execution_count AS AVG_LOGICAL_READS
+FROM sys.dm_exec_query_stats
+CROSS APPLY sys.dm_exec_sql_text(sql_handle) st
+OUTER APPLY sys.dm_exec_plan_attributes(plan_handle) pa
+WHERE attribute = 'dbid'
+ORDER BY AVG_LOGICAL_READS DESC ;
+ 
+ 
+看到了吗？直接可以定位到你的sql语句，优化去吧。还等什么呢？

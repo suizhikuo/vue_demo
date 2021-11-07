@@ -1,0 +1,7 @@
+EXEC sp_MoveTable TblScheduleCheckRangeDetail, 'Schedule'
+EXEC sp_MoveTable TblScheduleCheckRangeHeader, 'Schedule'  
+EXEC sp_MoveTable TblScheduleDayHistory, 'His' 
+EXEC sp_MoveTable TblScheduleDemandHistory, 'His' 
+EXEC sp_MoveTable TblScheduleHistory, 'His' 
+EXEC sp_MoveTable TblScheduleMessage, 'Schedule'
+EXEC sp_MoveTable TblScheduleVersionParam, 'His'

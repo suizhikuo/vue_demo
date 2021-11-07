@@ -1,0 +1,22 @@
+索引提高了多少性能
+新建了索引到底增加了多少数据的效率呢？到底提高了多少性能呢？运行如下SQL可以返回连接缺失索引动态管理视图，发现最有用的索引和创建索引的方法： 
+SELECT  
+avg_user_impact AS average_improvement_percentage,  
+avg_total_user_cost AS average_cost_of_query_without_missing_index,  
+'CREATE INDEX ix_' + [statement] +  
+ISNULL(equality_columns, '_') + 
+ISNULL(inequality_columns, '_') + ' ON ' + [statement] +  
+' (' + ISNULL(equality_columns, ' ') +  
+ISNULL(inequality_columns, ' ') + ')' +  
+ISNULL(' INCLUDE (' + included_columns + ')', '')  
+AS create_missing_index_command 
+FROM sys.dm_db_missing_index_details a INNER JOIN  
+sys.dm_db_missing_index_groups b ON a.index_handle = b.index_handle 
+INNER JOIN sys.dm_db_missing_index_group_stats c ON  
+b.index_group_handle = c.group_handle 
+WHERE avg_user_impact > = 40
+ 
+返回结果
+ 
+ 
+虽然用户能够修改性能提高的百分比，但以上查询返回所有能够将性能提高40%或更高的索引。你可以清晰的看到每个索引提高的性能和效率了

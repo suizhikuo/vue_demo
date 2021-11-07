@@ -1,0 +1,24 @@
+PRIMARY                 -->PRIMARY
+PRODProcurement_ASN     -->ASN
+PRODProcurement_BAS     -->PRIMARY
+PRODProcurement_DPS     -->PRIMARY
+PRODProcurement_FCST     -->PRIMARY
+PRODProcurement_HIS     -->His
+PRODProcurement_I      -->Int
+PRODProcurement_MR      -->PRIMARY
+PRODProcurement_MRHIS   -->PRIMARY
+PRODProcurement_PO      -->PO
+PRODProcurement_RPT    -->Report
+PRODProcurement_SS     --> Schedule
+PRODProcurement_SYS    -->PRIMARY
+
+ 
+ 
+ 
+
+
+
+
+
+
+ 

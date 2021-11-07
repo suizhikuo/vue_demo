@@ -1,0 +1,9 @@
+# 根据备注查询表
+select *
+from information_schema.COLUMNS
+where COLUMN_COMMENT like '%支付方式%';
+
+#  根据备注查询表
+select *
+from information_schema.TABLES
+where TABLE_COMMENT like '%扩展%';

@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>isJavaScript新打开的窗口和原来的窗口交互,iframe之间的相互交互</title>
+    <meta charset="utf-8" />
+</head>
+
+<body>
+    最新的浏览器对这个功能有限制,所以要在兼容模式下,弹出提示框后要允许阻止内容.才能看到效果
+    <input type="text" id="txtParentText" value="父页面文本域" />
+    <a href="ChildHtmlPage.html" target="_blank">链接打开新页面</a>
+    <input type="button" value="脚本打开新页面" onclick="openChild();" />
+
+    <script type="text/javascript">
+        var openChild = function () {
+            window.open('ChildHtmlPage.html', '打开了新页面', 'width=400,height=200,status=no,toolbar=no,menubar=no,location=no,resizable=yes,left=200,top=100');
+        }
+    </script>
+</body>
+
+</html>

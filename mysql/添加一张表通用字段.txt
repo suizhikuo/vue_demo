@@ -1,0 +1,11 @@
+alter table test_tablename add   `id` int(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增主键'  primary key;
+alter table test_tablename add   `is_delete` bit(1)  NULL DEFAULT b'0' COMMENT '是否删除(0:未删除,1已删除)';
+alter table test_tablename add   `create_by` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT '' COMMENT '创建人';
+alter table test_tablename add   `create_time` datetime(0)  NULL DEFAULT CURRENT_TIMESTAMP(0) COMMENT '创建日期';
+alter table test_tablename add   `update_by` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT '' COMMENT '更新人';
+alter table test_tablename add   `update_time` datetime(0)  NULL DEFAULT CURRENT_TIMESTAMP(0) ON UPDATE CURRENT_TIMESTAMP(0) COMMENT '更新日期';
+alter table test_tablename add   `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci  NULL DEFAULT '' COMMENT '备注';
+Aalter table test_tablename add  `record_status` int(11) NULL DEFAULT NULL COMMENT '记录状态(0:新建1:保存2:提交) ' AFTER `remark`;
+
+
+

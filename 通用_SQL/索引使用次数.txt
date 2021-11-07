@@ -1,0 +1,51 @@
+索引使用次数
+我们下看一下下面两种查询方式返回的结果（这两种查询的查询用途一致）
+①----
+declare @dbid int
+select @dbid = db_id()
+select objectname=object_name(s.object_id), s.object_id, indexname=i.name, i.index_id
+            , user_seeks, user_scans, user_lookups, user_updates
+from sys.dm_db_index_usage_stats s,
+            sys.indexes i
+where database_id = @dbid and objectproperty(s.object_id,'IsUserTable') = 1
+and i.object_id = s.object_id
+and i.index_id = s.index_id
+order by (user_seeks + user_scans + user_lookups + user_updates) asc
+返回查询结果
+ 
+ 
+②：使用多的索引排在前面
+SELECT  objects.name ,
+        databases.name ,
+        indexes.name ,
+        user_seeks ,
+        user_scans ,
+        user_lookups ,
+        partition_stats.row_count
+FROM    sys.dm_db_index_usage_stats stats
+        LEFT JOIN sys.objects objects ON stats.object_id = objects.object_id
+        LEFT JOIN sys.databases databases ON databases.database_id = stats.database_id
+        LEFT JOIN sys.indexes indexes ON indexes.index_id = stats.index_id
+                                         AND stats.object_id = indexes.object_id
+        LEFT  JOIN sys.dm_db_partition_stats partition_stats ON stats.object_id = partition_stats.object_id
+                                                              AND indexes.index_id = partition_stats.index_id
+WHERE   1 = 1
+--AND databases.database_id = 7
+        AND objects.name IS NOT NULL
+        AND indexes.name IS NOT NULL
+        AND user_scans>0
+ORDER BY user_scans DESC ,
+        stats.object_id ,
+        indexes.index_id
+返回查询结果
+ 
+ 
+user_seeks : 通过用户查询执行的搜索次数。 
+ 个人理解： 此统计索引搜索的次数
+user_scans: 通过用户查询执行的扫描次数。 
+  个人理解：此统计表扫描的次数，无索引配合
+user_lookups: 通过用户查询执行的查找次数。 
+ 个人理解：用户通过索引查找，在使用RID或聚集索引查找数据的次数，对于堆表或聚集表数据而言和索引配合使用次数
+user_updates:  通过用户查询执行的更新次数。 
+  个人理解：索引或表的更新次数
+我们可以清晰的看到，那些索引用的多，那些索引没用过，大家可以根据查询出来的东西去分析自己的数据索引和表

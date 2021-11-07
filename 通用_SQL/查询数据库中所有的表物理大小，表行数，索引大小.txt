@@ -1,0 +1,38 @@
+--查询数据库中所有的表物理大小，表行数，索引大小
+CREATE PROCEDURE get_tableinfo
+AS
+    IF NOT EXISTS ( SELECT  *
+                    FROM    dbo.sysobjects
+                    WHERE   id = OBJECT_ID(N'[dbo].[tablespaceinfo]')
+                            AND OBJECTPROPERTY(id, N'IsUserTable') = 1 )
+        CREATE TABLE tablespaceinfo      --创建结果存储表  
+            (
+              nameinfo VARCHAR(50) ,
+              rowsinfo INT ,
+              reserved VARCHAR(20) ,
+              datainfo VARCHAR(20) ,
+              index_size VARCHAR(20) ,
+              unused VARCHAR(20)
+            )        
+    TRUNCATE TABLE tablespaceinfo --清空数据表
+--这里.....关键部分.把存储过程的结果放到一个表里.  
+    INSERT  INTO tablespaceinfo
+            EXEC sp_MSforeachtable "exec sp_spaceused '?'"
+ go    
+ 
+ --执行存储过程生成数据到临时表tablespaceinfo
+EXEC get_tableinfo
+ --查询结果
+SELECT  *
+FROM    tablespaceinfo
+ORDER BY CAST(LEFT(LTRIM(RTRIM(reserved)), LEN(LTRIM(RTRIM(reserved))) - 2) AS INT) DESC
+
+ --查询数据库中所有的索引
+SELECT  h.type_desc ,
+        a.name AS tablename ,
+        h.name AS idexname
+FROM    sys.objects AS a
+        RIGHT JOIN sys.indexes AS h ON a.object_id = h.object_id
+WHERE   a.type <> 's'
+        AND h.NAME IS NOT NULL
+ORDER BY a.NAME

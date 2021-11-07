@@ -1,0 +1,23 @@
+
+
+视图syscomments中，注意字段id,text. 如果是存储过程,text字段存储的就是创建存储的脚本。
+视图sysobjects中，注意字段name,id,xtype.
+
+--查看所有函数(FN)中那些使用了存储过程spWms_StorerInv
+SELECT DISTINCT (so.name) AS name
+FROM   syscomments sc INNER JOIN sysobjects so ON sc.id = so.id
+WHERE  so.xtype = 'FN'
+AND    sc.text LIKE '%spWms_StorerInv%' 
+
+--查看所有存储过程中(p)中那些使用了存储过程spWms_StorerInv
+SELECT DISTINCT (so.name) AS name
+FROM   syscomments sc INNER JOIN sysobjects so ON sc.id = so.id
+WHERE  so.xtype = 'p'
+AND    sc.text LIKE '%spWms_StorerInv%'
+
+--查询某个字段在那些表中出现过
+select a.[name] from sysobjects a
+left join(select [id],count(*) b from syscolumns where [name] ='ProjectStatus' group by [id] having count(*)>0) b
+on a.[id]=b.[id]
+where b.id is not null
+

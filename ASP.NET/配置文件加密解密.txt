@@ -1,0 +1,21 @@
+﻿http://blog.csdn.net/jf_jifei/article/details/6527390
+
+aspnet_regiis.exe -pef secion physical_directory -prov provider
+aspnet_regiis.exe -pdf "connectionStrings" physical_directory
+
+
+在连接字符串的加密和解密的过程中，需要注意一下几点。 
+
+     使用加密的连接字符串
+    使用加密的连接字符串不需要编码解密，ASP.NET会自动对加密内容进行解密。
+
+     加密和解密在同一台计算机上使用
+    在加密过程中，使用了一个基于本机的密钥。这就意味着加密和解密必须在同一台计算机上进行，否则将不能解密。同时，在一台计算机上加密的配置，在另一台计算机上将不能正常使用。
+
+     中文路径问题
+    该命令对中文支持不是很好。如果站点的路径中有中文字符，也许不能正常加解密。
+
+
+
+aspnet_regiis.exe -pef "connectionStrings" "D:\\" -prov "DataProtectionConfigurationProvider"
+aspnet_regiis.exe -pdf "connectionStrings" "D:\\"
